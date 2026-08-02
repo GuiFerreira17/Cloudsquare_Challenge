@@ -1,0 +1,12 @@
+{
+  "type" : "sfdc_cms__route",
+  "title" : "Application Form",
+  "contentBody" : {
+    "activeViewId" : "Application_Form",
+    "configurationTags" : [ ],
+    "pageAccess" : "Public",
+    "routeType" : "custom-application-form",
+    "urlPrefix" : "application-form"
+  },
+  "urlName" : "application-form"
+}

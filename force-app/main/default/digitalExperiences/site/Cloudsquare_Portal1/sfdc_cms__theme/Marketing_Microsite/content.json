@@ -1,0 +1,16 @@
+{
+  "type" : "sfdc_cms__theme",
+  "title" : "Marketing Microsite",
+  "contentBody" : {
+    "activeBrandingSetId" : "microsite_template_marketing_branding",
+    "definitionName" : "marketing",
+    "layouts" : [ {
+      "layoutId" : "snaThemeLayout",
+      "layoutType" : "ServiceNotAvailable"
+    }, {
+      "layoutId" : "headerAndFooter",
+      "layoutType" : "Inner"
+    } ]
+  },
+  "urlName" : "marketing-microsite"
+}
