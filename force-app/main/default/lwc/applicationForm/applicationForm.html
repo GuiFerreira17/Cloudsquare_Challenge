@@ -1,0 +1,136 @@
+<template>
+    <lightning-card title="Application Form" icon-name="standard:form">
+        <div class="slds-var-p-around_medium form-container">
+            <template lwc:if={showSuccess}>
+                <div class="slds-notify slds-notify_alert slds-theme_success slds-var-m-bottom_medium" role="alert">
+                    <span class="slds-assistive-text">success</span>
+                    <h2>
+                        <strong>{resultMessage}</strong>
+                    </h2>
+                    <p class="slds-var-m-top_x-small" lwc:if={resultRecordType}>
+                        Record type: {resultRecordType} <br/>
+                        Record id: {resultRecordId}
+                    </p>
+                </div>
+                <lightning-button
+                    label="Submit another application"
+                    variant="neutral"
+                    onclick={handleReset}
+                ></lightning-button>
+            </template>
+
+            <template lwc:elseif={isSubmitting}>
+                <div class="slds-is-relative slds-var-p-around_large">
+                    <lightning-spinner alternative-text="Submitting application" size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <template lwc:else>
+                <template lwc:if={errorMessage}>
+                    <div class="slds-notify slds-notify_alert slds-theme_error slds-var-m-bottom_medium" role="alert">
+                        <span class="slds-assistive-text">error</span>
+                        <h2>{errorMessage}</h2>
+                    </div>
+                </template>
+
+                <section class="slds-var-m-bottom_medium form-section" aria-labelledby="company-heading">
+                    <h3 id="company-heading" class="slds-text-heading_small slds-var-m-bottom_small">
+                        Company Information
+                    </h3>
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-var-m-bottom_small">
+                            <lightning-input
+                                name="companyName"
+                                label="Company Name"
+                                type="text"
+                                value={application.companyName}
+                                required
+                                onchange={handleChange}
+                            ></lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-var-m-bottom_small">
+                            <lightning-input
+                                name="federalTaxId"
+                                label="Federal Tax Id"
+                                type="text"
+                                value={application.federalTaxId}
+                                required
+                                onchange={handleChange}
+                            ></lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-var-m-bottom_small">
+                            <lightning-input
+                                name="annualRevenue"
+                                label="Annual Revenue"
+                                type="number"
+                                value={application.annualRevenue}
+                                required
+                                min="1"
+                                step="1"
+                                message-when-range-underflow="Annual Revenue must be greater than 0."
+                                onchange={handleChange}
+                            ></lightning-input>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="slds-var-m-bottom_medium form-section" aria-labelledby="contact-heading">
+                    <h3 id="contact-heading" class="slds-text-heading_small slds-var-m-bottom_small">
+                        Contact Information
+                    </h3>
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-var-m-bottom_small">
+                            <lightning-input
+                                name="firstName"
+                                label="First Name"
+                                type="text"
+                                value={application.firstName}
+                                required
+                                onchange={handleChange}
+                            ></lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-var-m-bottom_small">
+                            <lightning-input
+                                name="lastName"
+                                label="Last Name"
+                                type="text"
+                                value={application.lastName}
+                                required
+                                onchange={handleChange}
+                            ></lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-var-m-bottom_small">
+                            <lightning-input
+                                name="email"
+                                label="Email"
+                                type="email"
+                                value={application.email}
+                                required
+                                onchange={handleChange}
+                            ></lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-var-m-bottom_small">
+                            <lightning-input
+                                name="phone"
+                                label="Phone"
+                                type="tel"
+                                value={application.phone}
+                                required
+                                onchange={handleChange}
+                            ></lightning-input>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="slds-var-m-top_medium">
+                    <lightning-button
+                        type="submit"
+                        label="Submit Application"
+                        variant="brand"
+                        onclick={handleSubmit}
+                    ></lightning-button>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

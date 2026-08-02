@@ -1,0 +1,10 @@
+.form-container {
+    background-color: var(--slds-g-color-surface-container-1, var(--slds-c-card-color-background, #ffffff));
+    border-radius: var(--slds-g-radius-border-2, 0.25rem);
+}
+
+.form-section {
+    padding: var(--slds-g-spacing-4, 1rem);
+    background-color: var(--slds-g-color-surface-container-2, transparent);
+    border-radius: var(--slds-g-radius-border-2, 0.25rem);
+}
