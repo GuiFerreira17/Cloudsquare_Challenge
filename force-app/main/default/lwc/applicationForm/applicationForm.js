@@ -22,12 +22,12 @@ export default class ApplicationForm extends LightningElement {
 
     handleChange(event) {
         const { name, value } = event.target;
-        console.log('handleChange', name, value);
+        // console.log('handleChange', name, value);
         this.application = {
             ...this.application,
             [name]: name === 'annualRevenue' ? (value === '' ? null : value) : value
         };
-        console.log('application', JSON.stringify(this.application));
+        // console.log('application', JSON.stringify(this.application));
     }
 
     handleSubmit() {
@@ -65,7 +65,7 @@ export default class ApplicationForm extends LightningElement {
         this.isSubmitting = true;
         submitApplication({ inputJson: JSON.stringify(input) })
         .then(result => {
-            console.log('result', JSON.stringify(result));
+            // console.log('result', JSON.stringify(result));
             if (result && result.success) {
                 this.showSuccess = true;
                 this.resultMessage = result.message;
@@ -77,7 +77,7 @@ export default class ApplicationForm extends LightningElement {
             }
         })
         .catch(error => {
-            console.log('catch error', error);
+            // console.log('catch error', error);
             this.errorMessage =
                 (error && error.body && error.body.message) ||
                 (error && error.message) ||
