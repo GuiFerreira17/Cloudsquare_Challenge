@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sharingGuestRules>
+        <fullName>Lead_CloudsquarePortal</fullName>
+        <accessLevel>Read</accessLevel>
+        <label>Lead_CloudsquarePortal</label>
+        <sharedTo>
+            <guestUser>Cloudsquare_Portal</guestUser>
+        </sharedTo>
+        <criteriaItems>
+            <field>Application_Source__c</field>
+            <operation>equals</operation>
+            <value>Community,Webhook</value>
+        </criteriaItems>
+        <includeHVUOwnedRecords>false</includeHVUOwnedRecords>
+    </sharingGuestRules>
+</SharingRules>

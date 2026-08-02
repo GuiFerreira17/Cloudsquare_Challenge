@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sharingGuestRules>
+        <fullName>Account_CloudsquarePortal</fullName>
+        <accessLevel>Read</accessLevel>
+        <label>Account_CloudsquarePortal</label>
+        <sharedTo>
+            <guestUser>Cloudsquare_Portal</guestUser>
+        </sharedTo>
+        <criteriaItems>
+            <field>Federal_Tax_Id__c</field>
+            <operation>notEqual</operation>
+            <value></value>
+        </criteriaItems>
+        <includeHVUOwnedRecords>false</includeHVUOwnedRecords>
+    </sharingGuestRules>
+</SharingRules>
