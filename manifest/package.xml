@@ -30,7 +30,6 @@
 	</types>
 	<types>
 		<members>Account</members>
-		<members>Contact</members>
 		<members>Lead</members>
 		<members>Opportunity</members>
 		<name>CustomObject</name>
@@ -54,6 +53,10 @@
 		<name>LeadConvertSettings</name>
 	</types>
 	<types>
+		<members>applicationForm</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<types>
 		<members>Account.AccMR_FederalTaxId_Name</members>
 		<name>MatchingRule</name>
 	</types>
@@ -70,32 +73,6 @@
 		<members>Account</members>
 		<members>Lead</members>
 		<name>SharingRules</name>
-	</types>
-
-	<types>
-		<members>Cloudsquare_Portal1</members>
-		<name>CustomSite</name>
-	</types>
-	<types>
-		<members>site/Cloudsquare_Portal1.sfdc_cms__view/Application_Form</members>
-		<name>DigitalExperience</name>
-	</types>
-	<types>
-		<members>content/CloudsquarePortal</members>
-		<members>site/Cloudsquare_Portal1</members>
-		<name>DigitalExperienceBundle</name>
-	</types>
-	<types>
-		<members>Cloudsquare_Portal1</members>
-		<name>DigitalExperienceConfig</name>
-	</types>
-	<types>
-		<members>Cloudsquare_Portal</members>
-		<name>ExperienceBundle</name>
-	</types>
-	<types>
-		<members>Cloudsquare_Portal</members>
-		<name>Network</name>
 	</types>
 	<version>67.0</version>
 </Package>

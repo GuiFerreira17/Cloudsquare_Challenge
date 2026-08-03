@@ -19,6 +19,7 @@ Built as Salesforce DX source (API **67.0**).
 - [Testing](#testing)
 - [Requirements coverage](#requirements-coverage)
 - [Assumptions and design decisions](#assumptions-and-design-decisions)
+- [Notes] (#note)
 - [Known limitations](#known-limitations)
 
 ## Architecture at a glance
@@ -55,8 +56,6 @@ force-app/main/default/
 │   ├── AccountFactory.cls / LeadFactory.cls  # Test helpers
 │   └── *Test.cls                          # Unit tests
 ├── lwc/applicationForm/                   # Public Experience Cloud form
-├── digitalExperiences/                    # Cloudsquare Portal site (Application Form page)
-├── digitalExperienceConfigs/              # Site config (urlPathPrefix: cloudsquare)
 ├── duplicateRules/                        # Lead → Account duplicate rule
 ├── matchingRules/                         # Account Tax Id OR Name matching
 ├── sharingRules/                          # Guest read access (Account, Lead)
@@ -69,12 +68,14 @@ script/Test_ApplicationWebhookService.cls  # Execute Anonymous smoke script
 docs/ARCHITECTURE.md
 ```
 
+The Experience Cloud site is **not** deployed from this repo. Create it manually in the org (see Setup) so the name stays aligned with guest sharing rules and the portal profile.
+
 ## Setup instructions
 
 ### Prerequisites
 
 - [Salesforce CLI](https://developer.salesforce.com/tools/salesforcecli) (`sf`)
-- A Salesforce org with **Experience Cloud** enabled
+- A Salesforce org where Digital Experiences can be enabled
 - Git clone of this repository
 
 ### 1. Authenticate
@@ -83,49 +84,74 @@ docs/ARCHITECTURE.md
 sf org login web --alias cloudsquare
 ```
 
-### 2. Deploy metadata
+### 2. Enable Digital Experiences
 
-Prefer a full source-dir deploy so Apex, LWC, profiles, rules, and the Experience site all go together:
+1. In Setup, go to **Digital Experiences** → **Settings**.
+2. Enable Digital Experiences / Experience Cloud (checkbox wording may vary by org).
+3. Save.
+
+### 3. Create the site (Microsite LWR)
+
+1. Go to **Digital Experiences** → **All Sites** → **New**.
+2. Choose template **Microsite (LWR)**.
+3. Set the site name to exactly **`Cloudsquare Portal`**.
+
+> **Important:** The name must be `Cloudsquare Portal`. Guest sharing rules and the guest profile in this project expect the network / guest user key `Cloudsquare_Portal`.
+
+### 4. Guest APIs and activation
+
+1. Open the site workspace → **Administration** → **Preferences**.
+2. Enable **Allow guest users to access public APIs** (required for the public webhook).
+3. Save.
+4. Go to **Administration** / site **Settings** and **Activate** the community.
+
+### 5. Public access and Application Form page
+
+1. Open **Experience Builder**.
+2. **Settings** → **General** → enable **Public Access** (Guest user).
+3. Create a new **blank** page:
+   - **Name:** `Application Form`
+   - **URL:** `application-form`
+   - **API Name:** `ApplicationForm`
+   - **Page access:** Public
+4. **Publish** the site once (page exists before you drop the LWC after deploy).
+
+### 6. Deploy the package
+
+Deploy **after** the site exists so the guest profile and sharing rules can bind to `Cloudsquare Portal`:
 
 ```bash
-sf project deploy start --source-dir force-app --target-org cloudsquare
+sf project deploy start --manifest manifest/package.xml --target-org cloudsquare
 ```
 
-### 3. Activate Experience Cloud
+This deploys Apex, the `applicationForm` LWC, `Cloudsquare Portal Profile`, guest sharing rules, duplicate/matching rules, custom fields, and layouts. Experience Cloud site metadata is intentionally **not** in the package.
 
-Site metadata is versioned under `digitalExperiences/` / `digitalExperienceConfigs/`:
+### 7. Add the LWC and publish again
 
-| Item | Value |
-| --- | --- |
-| Site label | Cloudsquare Portal |
-| URL path prefix | `cloudsquare` |
-| Application page | `/application-form` (public) |
-| LWC on the page | `c:applicationForm` |
-| Guest / network | `Cloudsquare_Portal` (used by guest sharing rules) |
+1. In Experience Builder, open the **Application Form** page.
+2. Add the Lightning Web Component **`applicationForm`**.
+3. **Publish** the community.
 
-After deploy:
+### 8. Verify
 
-1. Open **Experience Workspaces** → **Cloudsquare Portal** → **Publish** (and activate the site if it is not already live).
-2. Confirm the guest user uses the **Cloudsquare Portal Profile** and that Apex class access is enabled for `ApplicationFormController`, `ApplicationWebhook`, `ApplicationWebhookService`, `ApplicationProcessingService`, and `SObjectDuplicateMatcher`.
+1. Confirm matching rule `AccMR_FederalTaxId_Name` and duplicate rule `LeadDR_AccLead_Federal_Name` are **Active**.
+2. Confirm the guest profile has Apex access for `ApplicationFormController`, `ApplicationWebhook`, `ApplicationWebhookService`, `ApplicationProcessingService`, and `SObjectDuplicateMatcher`.
 3. Confirm guest sharing rules `Account_CloudsquarePortal` and `Lead_CloudsquarePortal` are active.
-4. Confirm matching rule `AccMR_FederalTaxId_Name` and duplicate rule `LeadDR_AccLead_Federal_Name` are **Active**.
-5. Desactive all standards Lead matching / duplicate rule for Lead-to-Lead dedupe 
-
-Public form URL (typical pattern):
+4. Open the public form (typical pattern):
 
 ```
 https://<my-domain>.my.site.com/cloudsquare/application-form
 ```
 
-### 4. Webhook URL
+(Exact path prefix depends on the URL you chose when creating the Microsite.)
 
-With the site live, the REST endpoint is available at:
+### 9. Webhook URL
+
+With the site live and guest public APIs enabled:
 
 ```
 https://<my-domain>.my.site.com/cloudsquare/services/apexrest/external/applications
 ```
-
-(Exact host depends on your My Domain / Experience domain.)
 ## How the Community form works
 
 1. Guest opens the public page and fills Company Name, Federal Tax Id, Annual Revenue, and contact fields.
@@ -235,10 +261,17 @@ LWC Jest tests are not required by the case study and are not included.
 | Opportunity extras | A **Contact** is also created under the matched Account when an Opportunity is created. |
 | Existing Lead | If a Lead match is returned, the Lead is **updated** (upsert) instead of inserting a duplicate. |
 | Errors at the boundary | Unexpected exceptions are logged and replaced with a generic message so guests / callers never see stack traces. |
-| Experience Cloud metadata | Site **Cloudsquare Portal** (`urlPathPrefix = cloudsquare`) and the public **Application Form** page (`c:applicationForm`) are versioned under `digitalExperiences/` / `digitalExperienceConfigs/`. Publish/activate remains a one-time org step after deploy. |
+| Experience Cloud site | Created **manually** as a Microsite (LWR) named **`Cloudsquare Portal`**. Site metadata is not deployed from the package (avoids Experience deploy friction). Guest sharing rules and the portal profile expect that exact name. |
+
+
+
+## Note
+To optimize the limited time available for this case study, I committed the implementation directly to the main branch. In a production environment, I typically follow a GitFlow-based workflow, creating feature branches, opening Pull Requests for code review, and promoting changes through the appropriate environments before merging into main.
+
 
 ## Known limitations
 
+- Experience Cloud site / page metadata is **not** in `manifest/package.xml` by design; create and publish the Microsite manually before deploying.
 - Public webhook has no authentication, rate limiting, or idempotency keys.
 - No bulk / batch intake path.
 - No LWC Jest tests (explicitly out of scope for the case study).

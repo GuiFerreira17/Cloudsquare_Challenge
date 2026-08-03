@@ -189,7 +189,7 @@ If no Account is found:
 
 ## Guest user security model
 
-The public Experience Cloud site **Cloudsquare Portal** (`urlPathPrefix = cloudsquare`) runs as the guest user associated with the **Cloudsquare Portal Profile** (`Guest User License`). The public **Application Form** page (`/application-form`) hosts `c:applicationForm` with `pageAccess = Public`.
+The public Experience Cloud site is created **manually** as a **Microsite (LWR)** named **`Cloudsquare Portal`** (see [README setup](../README.md#setup-instructions)). That name is required so guest sharing rules and the guest profile key `Cloudsquare_Portal` line up. The site runs as the guest user associated with the **Cloudsquare Portal Profile** (`Guest User License`). After deploy, the public **Application Form** page (`/application-form`) hosts `c:applicationForm` with public / guest access and guest public APIs enabled for the webhook.
 
 ### Profile access
 
